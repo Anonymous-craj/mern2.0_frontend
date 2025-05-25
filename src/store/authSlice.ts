@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import API from "../http";
 import { Status } from "../globals/types/types";
+import type { AppDispatch } from "./store";
 
 interface User {
   username: string;
@@ -50,14 +51,20 @@ const authSlice = createSlice({
     setToken(state: AuthState, action: PayloadAction<string>) {
       state.user.token = action.payload;
     },
+
+    logout(state: AuthState) {
+      state.user = {} as User;
+      state.status = Status.LOADING;
+    },
   },
 });
 
-export const { setUser, setStatus, resetStatus, setToken } = authSlice.actions;
+export const { setUser, setStatus, resetStatus, setToken, logout } =
+  authSlice.actions;
 export default authSlice.reducer;
 
 export function register(data: RegisterData) {
-  return async function registerThunk(dispatch: any) {
+  return async function registerThunk(dispatch: AppDispatch) {
     dispatch(setStatus(Status.LOADING));
     try {
       const response = await API.post("register", data);
@@ -74,7 +81,7 @@ export function register(data: RegisterData) {
 }
 
 export function login(data: LoginData) {
-  return async function loginThunk(dispatch: any) {
+  return async function loginThunk(dispatch: AppDispatch) {
     dispatch(setStatus(Status.LOADING));
     try {
       const response = await API.post("login", data);

@@ -1,6 +1,26 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import { useEffect, useState } from "react";
+import { logout } from "../../../store/authSlice";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const { user } = useAppSelector((state) => state.auth);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token || !!user.token);
+  }, [user.token]);
+
+  const dispatch = useAppDispatch();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    dispatch(logout());
+    setIsLoggedIn(false);
+    navigate("/login");
+  };
   return (
     <header
       id="page-header"
@@ -30,24 +50,29 @@ const Navbar = () => {
           </a>
         </div>
         <nav className="space-x-3 md:space-x-6">
-          <Link
-            to="/login"
-            className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
-          >
-            <span>Login</span>
-          </Link>
-          <Link
-            to="/register"
-            className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
-          >
-            <span>Register</span>
-          </Link>
-          <Link
-            to="#"
-            className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
-          >
-            <span>Logout</span>
-          </Link>
+          {!isLoggedIn ? (
+            <>
+              <Link
+                to="/login"
+                className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
+              >
+                <span>Login</span>
+              </Link>
+              <Link
+                to="/register"
+                className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
+              >
+                <span>Register</span>
+              </Link>
+            </>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400"
+            >
+              Logout
+            </button>
+          )}
         </nav>
       </div>
       {/* END Main Header Content */}
