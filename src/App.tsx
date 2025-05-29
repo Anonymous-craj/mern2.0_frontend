@@ -4,7 +4,8 @@ import store from "./store/store";
 import Home from "./pages/home/Home";
 import Register from "./pages/auth/register/Register";
 import Login from "./pages/auth/login/Login";
-import SingleProduct from "./pages/singleProduct/singleProduct";
+import SingleProduct from "./pages/singleProduct/SingleProduct";
+
 function App() {
   return (
     <Provider store={store}>
